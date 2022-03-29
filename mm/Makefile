@@ -10,6 +10,7 @@ CFLAGS_memory.o = -O
 CFLAGS_mprotect.o = -O
 CFLAGS_madvise.o = -O
 CFLAGS_vmalloc.o = -O
+CFLAGS_maccess.o = -O
 
 KASAN_SANITIZE_slab_common.o := n
 KASAN_SANITIZE_slab.o := n
