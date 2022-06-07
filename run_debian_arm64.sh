@@ -154,6 +154,7 @@ run_qemu_debian(){
 			-device virtio-blk-device,drive=hd0\
 			--fsdev local,id=kmod_dev,path=./kmodules,security_model=none\
 			-device virtio-9p-pci,fsdev=kmod_dev,mount_tag=kmod_mount\
+			-device virtio-net-device,netdev=usernet -netdev user,id=usernet,hostfwd=tcp:127.0.0.1:5555-:22\
 			$DBG"
 		echo "running:"
 		echo $cmd
