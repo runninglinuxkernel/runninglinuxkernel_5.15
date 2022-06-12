@@ -83,9 +83,10 @@ $ tar -Jxf  qemu-6.2.0.tar.xz
 $ cd qemu-6.2.0
 $ mkdir build
 $ cd build/
-$ ../configure --target-list=aarch64-softmmu
+$ ../configure --target-list=aarch64-softmmu,riscv64-softmmu
 $ ninja
-$ sudo cp qemu-system-aarch64 /usr/local/bin/qemu-system-aarch64-git
+$ sudo cp qemu-system-aarch64 /usr/local/bin/qemu-system-aarch64-6.2
+$ sudo cp qemu-system-riscv64 /usr/local/bin/qemu-system-riscv64-6.2
 ```
 
 ### 1. 编译运行
@@ -102,19 +103,19 @@ $ sudo cp qemu-system-aarch64 /usr/local/bin/qemu-system-aarch64-git
 首先，编译内核。
 ```
 $ cd runninglinuxkernel_5.15
-$ ./run_debian_arm64.sh build_kernel
+$ ./run_rlk_arm64.sh build_kernel
 ```
 
 执行上述脚本需要几十分钟，依赖于主机的计算能力。接着，编译根文件系统。
 ```
 $ cd runninglinuxkernel_5.15
-$ sudo ./run_debian_arm64.sh build_rootfs
+$ sudo ./run_rlk_arm64.sh build_rootfs
 ```
 
 读者需要注意，编译根文件系统需要管理员权限，而编译内核则不需要。执行完成后会生成一个名为rootfs_arm64.ext4的根文件系统。
 
 运行刚才编译好的ARM64版本的Linux系统。
-运行run_debian_arm64.sh脚本，输入run参数即可。
+运行run_rlk_arm64.sh脚本，输入run参数即可。
 ```
 $./run_debian_arm64.sh run
 ```
@@ -125,8 +126,8 @@ $./run_debian_arm64.sh run
 
 如果读者修改了runninglinuxkernel_5.15内核的配置文件，比如arch/arm64/config/debian_defconfig文件，那么需要重新编译内核以及更新根文件系统。
 ```
-$ ./run_debian_arm64.sh build_kernel         # 重新编译内核
-$ sudo ./run_debian_arm64.sh update_rootfs  #更新根文件系统
+$ ./run_rlk_arm64.sh build_kernel         # 重新编译内核
+$ sudo ./run_rlk_arm64.sh update_rootfs  #更新根文件系统
 ```
 
 ### 2. 在线安装软件包
@@ -209,6 +210,45 @@ root@ubuntu: /mnt/hello_world#
 加载内核模块。
 ```
 root@ubuntu:/mnt/hello_world# insmod test.ko
+```
+
+### 5. 对RISC-V的支持
+新增了对RISC-V的支持，内置了run_rlk_riscv.sh编译脚本。
+
+```
+$ cd runninglinuxkernel_5.15
+$ ./run_rlk_riscv.sh build_kernel
+$ sudo ./run_rlk_riscv.sh build_rootfs
+```
+### 6. apt update证书问题
+
+如果在QEMU平台里apt更新失败，如下面日志显示。
+
+```
+benshushu:~# apt update
+Get:1 http://mirrors.ustc.edu.cn/debian unstable InRelease [165 kB]
+Err:1 http://mirrors.ustc.edu.cn/debian unstable InRelease
+  The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 648ACFD622F3D138 NO_PUBKEY 0E98404D386FA1D9
+Reading package lists... Done
+W: GPG error: http://mirrors.ustc.edu.cn/debian unstable InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 648ACFD622F3D138 NO_PUBKEY 0E98404D386FA1D9
+E: The repository 'http://mirrors.ustc.edu.cn/debian unstable InRelease' is not signed.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details.
+benshushu:~#
+```
+
+这个是由于PGP证书的问题，上述日志显示有两个证书有问题，我们可以通过如下方式来修复。
+
+```
+# apt-key adv --keyserver pgp.mit.edu --recv-keys 648ACFD622F3D138 //其中648ACFD622F3D138为有问题的证书Key
+
+# apt-key adv --keyserver pgp.mit.edu --recv-keys 0E98404D386FA1D9 //其中0E98404D386FA1D9为有问题的证书KEY
+```
+
+上述两个证书修复之后就可以执行apt update操作了。
+
+```
+# apt update
 ```
 
 ## 加入奔跑吧微信技术交流群
