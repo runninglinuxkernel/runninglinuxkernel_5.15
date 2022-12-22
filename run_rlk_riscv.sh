@@ -15,7 +15,7 @@ rootfs_image=$PWD/rootfs_debian_riscv.ext4
 rootfs_size=2048
 SMP="-smp 2"
 
-QEMU=qemu-system-riscv64
+QEMU=qemu-system-riscv64-7.0
 
 rootfs_arg="root=/dev/vda rootfstype=ext4 rw"
 kernel_arg="noinintrd nokaslr earlycon=sbi console=ttyS0"
@@ -147,7 +147,7 @@ run_qemu_debian(){
 		fi
 
 		cmd="$QEMU -machine virt -m 1024 $SMP \
-			-nographic -kernel fw_jump.elf -device loader,file=arch/riscv/boot/Image,addr=0x80200000 \
+			-nographic -bios fw_jump.elf -kernel arch/riscv/boot/Image -device loader,file=arch/riscv/boot/Image,addr=0x80200000 \
 			-append \"$kernel_arg $debug_arg $rootfs_arg $crash_arg $dyn_arg\"\
 			-drive if=none,file=$rootfs_image,id=hd0 -device virtio-blk-device,drive=hd0\
 			-device virtio-net-device,netdev=usernet -netdev user,id=usernet,hostfwd=tcp:127.0.0.1:5555-:22\
