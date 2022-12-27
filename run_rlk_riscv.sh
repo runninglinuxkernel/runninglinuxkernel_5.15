@@ -15,9 +15,7 @@ rootfs_image=$PWD/rootfs_debian_riscv.ext4
 rootfs_size=2048
 SMP="-smp 2"
 
-QEMU=qemu-system-riscv64-7.0
-
-rootfs_arg="root=/dev/vda rootfstype=ext4 rw"
+QEMU=qemu-system-riscv64-7.0 rootfs_arg="root=/dev/vda rootfstype=ext4 rw"
 kernel_arg="noinintrd nokaslr earlycon=sbi console=ttyS0"
 crash_arg=""
 dyn_arg=""
@@ -25,6 +23,7 @@ debug_arg="loglevel=8 sched_debug"
 
 if [ $# -lt 1 ]; then
 	echo "Usage: $0 [arg]"
+	echo "menuconfig: make menuconfig for kernel"
 	echo "build_kernel: build the kernel image."
 	echo "build_rootfs: build the rootfs image, need root privilege"
 	echo "update_rootfs: update kernel modules for rootfs image, need root privilege."
@@ -42,6 +41,13 @@ make_kernel_image(){
 		echo "start build kernel image..."
 		make debian_defconfig
 		make -j $JOBCOUNT
+}
+
+make_menuconfig(){
+		echo "start re-config kernel"
+		make debian_defconfig
+		make menuconfig
+		cp .config $PWD/arch/riscv/configs/debian_defconfig 
 }
 
 prepare_rootfs(){
@@ -166,6 +172,10 @@ case $1 in
 		#build_rootfs
 		;;
 	
+	menuconfig)
+		make_menuconfig
+		;;
+
 	build_rootfs)
 		#make_kernel_image
 		check_root
