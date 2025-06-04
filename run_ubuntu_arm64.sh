@@ -84,9 +84,9 @@ build_kernel_devel(){
 	cp -a arch/arm64/include $kernel_build/arch/arm64/
 	cp -a arch/arm64/Makefile $kernel_build/arch/arm64/
 
-	# cp from linux-kbuild-5.15 package
-	cp -a rootfs_ubuntu_arm64/usr/lib/linux-kbuild-5.15/scripts $kernel_build
-	cp -a rootfs_ubuntu_arm64/usr/lib/linux-kbuild-5.15/tools $kernel_build
+	# cp from linux-headers-5.15.0-25-generic package
+	cp -a rootfs_ubuntu_arm64/usr/src/linux-headers-5.15.0-25-generic/scripts $kernel_build
+	cp -a rootfs_ubuntu_arm64/usr/src/linux-headers-5.15.0-25-generic/tools $kernel_build
 
 	cp  scripts/module.lds $kernel_build/scripts/
 
@@ -162,7 +162,8 @@ run_qemu_ubuntu(){
 			-device virtio-blk-device,drive=hd0\
 			--fsdev local,id=kmod_dev,path=./kmodules,security_model=none\
 			-device virtio-9p-pci,fsdev=kmod_dev,mount_tag=kmod_mount\
-			-device virtio-net-device,netdev=mynet -netdev user,id=mynet\
+			-device virtio-net-pci,netdev=mynet -netdev user,id=mynet\
+			-device e1000e\
 			$DBG"
 		echo "running:"
 		echo $cmd
