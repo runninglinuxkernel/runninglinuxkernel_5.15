@@ -4671,6 +4671,7 @@ int e1000e_open(struct net_device *netdev)
 	if (err)
 		goto err_req_irq;
 
+#if 0
 	/* Work around PCIe errata with MSI interrupts causing some chipsets to
 	 * ignore e1000e MSI messages, which means we need to test our MSI
 	 * interrupt now
@@ -4682,6 +4683,7 @@ int e1000e_open(struct net_device *netdev)
 			goto err_req_irq;
 		}
 	}
+#endif
 
 	/* From here on the code is the same as e1000e_up() */
 	clear_bit(__E1000_DOWN, &adapter->state);

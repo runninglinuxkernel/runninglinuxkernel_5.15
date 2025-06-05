@@ -2004,7 +2004,6 @@ const struct e1000_info e1000_82573_info = {
 const struct e1000_info e1000_82574_info = {
 	.mac			= e1000_82574,
 	.flags			= FLAG_HAS_HW_VLAN_FILTER
-				  | FLAG_HAS_MSIX
 				  | FLAG_HAS_JUMBO_FRAMES
 				  | FLAG_HAS_WOL
 				  | FLAG_HAS_HW_TIMESTAMP

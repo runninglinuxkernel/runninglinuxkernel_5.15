@@ -412,16 +412,9 @@ void e1000e_check_options(struct e1000_adapter *adapter)
 		};
 
 #ifdef CONFIG_PCI_MSI
-		if (adapter->flags & FLAG_HAS_MSIX) {
-			opt.err = kstrdup("defaulting to 2 (MSI-X)",
-					  GFP_KERNEL);
-			opt.def = E1000E_INT_MODE_MSIX;
-			opt.arg.r.max = E1000E_INT_MODE_MSIX;
-		} else {
 			opt.err = kstrdup("defaulting to 1 (MSI)", GFP_KERNEL);
 			opt.def = E1000E_INT_MODE_MSI;
 			opt.arg.r.max = E1000E_INT_MODE_MSI;
-		}
 
 		if (!opt.err) {
 			dev_err(&adapter->pdev->dev,
